@@ -1,4 +1,4 @@
-import {React,useState} from 'react'
+import {React,useState,useEffect} from 'react'
 import { Link , useNavigate,useLocation} from 'react-router-dom';
 import {assets} from '../assets/assets'
 import { useClerk, useUser,UserButton } from '@clerk/clerk-react';
@@ -24,25 +24,22 @@ const Navbar = () => {
     const {openSignIn} = useClerk()
     const {user} = useUser()
     const navigate = useNavigate()
+    const location = useLocation()
 
+    
 
-    React.useEffect(() => {
+useEffect(() => {
+    setIsScrolled(location.pathname !== '/');
 
-        if(location.pathname !== '/'){
-            setIsScrolled(true)
-            return;
-        }else{
-            setIsScrolled(false)
-        }
+    const handleScroll = () => {
+        setIsScrolled(window.scrollY > 10 || location.pathname !== '/');
+    };
 
-        setIsScrolled(prev => location.pathname !== '/' ? true : prev);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
 
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 10);
-        };
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+}, [location]);
+
 
 
     return (
